@@ -1,29 +1,129 @@
 <!DOCTYPE html>
+<html lang="en">
 
-<html>
-  <head>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Font</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --fontsize: 16px;
+            --fontcolor: #000000;
+        }
 
-  <body>
-    <!-- the entire body must be written by student -->
-    <form>
-      <label for="fontsize">Font Size:</label>
-      <input
-        type="number"
-        id="fontsize"
-        name="fontsize"
-        min="8"
-        max="72"
-        value="16"
-      />
-      <br />
-      <label for="fontcolor">Font Color:</label>
-      <input type="color" id="fontcolor" name="fontcolor" value="#000000" />
-      <br />
-      <input type="submit" value="Save" />
+        body {
+            font-size: var(--fontsize);
+            color: var(--fontcolor);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Customize Your Font</h1>
+
+    <form id="fontForm">
+
+        <label for="fontsize">Font Size:</label>
+        <input type="number" id="fontsize" min="8" max="72" value="16" required>
+
+        <br><br>
+
+        <label for="fontcolor">Font Color:</label>
+        <input type="color" id="fontcolor" value="#000000">
+
+        <br><br>
+
+        <input type="submit" value="Save">
+
     </form>
 
-    <script type="text/javascript" src="./script.js"></script>
-  </body>
+    <p>
+        This is a sample paragraph. Customize the font size
+        and color using the options above.
+    </p>
+    <script>
+
+        const form = document.getElementById("fontForm");
+
+        const fontSizeInput = document.getElementById("fontsize");
+        const fontColorInput = document.getElementById("fontcolor");
+
+        // Apply preferences when page loads
+        document.addEventListener("DOMContentLoaded", () => {
+
+            const cookies = document.cookie.split("; ");
+
+            let savedFontSize;
+            let savedFontColor;
+
+            cookies.forEach(cookie => {
+                const [name, value] = cookie.split("=");
+
+                if (name === "fontsize") {
+                    savedFontSize = value;
+                }
+
+                if (name === "fontcolor") {
+                    savedFontColor = value;
+                }
+            });
+
+            if (savedFontSize) {
+                document.documentElement.style.setProperty(
+                    "--fontsize",
+                    savedFontSize + "px"
+                );
+
+                fontSizeInput.value = savedFontSize;
+            }
+
+            if (savedFontColor) {
+                document.documentElement.style.setProperty(
+                    "--fontcolor",
+                    savedFontColor
+                );
+
+                fontColorInput.value = savedFontColor;
+            }
+
+        });
+
+        // Save preferences in cookies
+        form.addEventListener("submit", (event) => {
+
+            event.preventDefault();
+
+            const fontSize = fontSizeInput.value;
+            const fontColor = fontColorInput.value;
+
+            if (fontSize < 8 || fontSize > 72) {
+                alert("Font size must be between 8 and 72.");
+                return;
+            }
+
+            // Store cookies for 1 year
+            document.cookie = `fontsize=${fontSize}; max-age=31536000; path=/`;
+
+            document.cookie = `fontcolor=${fontColor}; max-age=31536000; path=/`;
+
+            // Apply preferences immediately
+            document.documentElement.style.setProperty(
+                "--fontsize",
+                fontSize + "px"
+            );
+
+            document.documentElement.style.setProperty(
+                "--fontcolor",
+                fontColor
+            );
+
+            alert("Preferences saved successfully!");
+
+        });
+
+    </script>
+</body>
+
 </html>
